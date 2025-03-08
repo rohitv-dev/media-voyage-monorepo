@@ -4,6 +4,7 @@ import { TRPCProvider } from "./utils/trpc";
 import { AppRouter } from "@repo/api";
 import { useState } from "react";
 import "./App.css";
+import { Testing } from "./Testing";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -42,7 +43,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        Placeholder
+        <Testing />
       </TRPCProvider>
     </QueryClientProvider>
   );
