@@ -1,0 +1,48 @@
+{
+  "name": "@repo/schemas",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bunchee",
+    "dev": "bunchee --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "bunchee": "^6.4.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "dayjs": "^1.11.13",
+    "zod": "^3.24.2"
+  },
+  "exports": {
+    "./dateFunctions": {
+      "import": {
+        "types": "./dist/es/dateFunctions.d.ts",
+        "default": "./dist/es/dateFunctions.js"
+      },
+      "require": {
+        "types": "./dist/cjs/dateFunctions.d.cts",
+        "default": "./dist/cjs/dateFunctions.cjs"
+      }
+    },
+    "./mediaSchema": {
+      "import": {
+        "types": "./dist/es/mediaSchema.d.ts",
+        "default": "./dist/es/mediaSchema.js"
+      },
+      "require": {
+        "types": "./dist/cjs/mediaSchema.d.cts",
+        "default": "./dist/cjs/mediaSchema.cjs"
+      }
+    }
+  }
+}

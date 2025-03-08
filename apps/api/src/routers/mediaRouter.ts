@@ -3,8 +3,8 @@ import { db } from "../db/db";
 import { mediaTable } from "../db/schema";
 import { protectedProcedure } from "../middleware/protectedProcedure";
 import { router } from "../trpc";
-import { AddMediaSchema, addMediaSchema } from "@repo/utils/src/schemas/mediaSchema";
-import { formatDate } from "@repo/utils/src/dateFunctions";
+import { AddMediaSchema, addMediaSchema } from "@repo/schemas/mediaSchema";
+import { formatDate } from "@repo/schemas/dateFunctions";
 
 export const mediaRouter = router({
   getMedia: protectedProcedure.query(async ({ ctx }) => {

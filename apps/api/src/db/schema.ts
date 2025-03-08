@@ -1,4 +1,4 @@
-import { boolean, date, index, integer, json, numeric, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, json, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const statusTable = pgTable("statuses", {
   status: text().primaryKey(),

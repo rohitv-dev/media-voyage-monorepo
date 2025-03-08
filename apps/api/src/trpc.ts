@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 
-export const createContext = ({ req, res }: CreateExpressContextOptions) => {
+export const createContext = ({ req }: CreateExpressContextOptions) => {
   if (req.user) {
     return {
       user: req.user,
