@@ -1,5 +1,5 @@
 import passport from "passport";
-import { loginSchema, registerSchema } from "../validations/authSchema";
+import { loginSchema, registerSchema } from "@repo/schemas/authSchema";
 import { validateData } from "../middleware/validateData";
 import express from "express";
 import crypto from "crypto";
@@ -21,7 +21,7 @@ declare global {
 
 export const authRouter = express.Router();
 
-authRouter.post("/auth/register", validateData(registerSchema), async (req, res, next) => {
+authRouter.post("/register", validateData(registerSchema), async (req, res, next) => {
   try {
     const users = await db.select().from(userTable).where(eq(userTable.email, req.body.email));
 
@@ -66,7 +66,7 @@ authRouter.post("/auth/register", validateData(registerSchema), async (req, res,
 });
 
 authRouter.post(
-  "/auth/login",
+  "/login",
   validateData(loginSchema),
   passport.authenticate("local", { failWithError: true }),
   (req, res) => {
@@ -79,14 +79,14 @@ authRouter.post(
   }
 );
 
-authRouter.post("/auth/logout", (req, res, next) => {
+authRouter.post("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
     res.send("Logged out");
   });
 });
 
-authRouter.get("/auth/status", (req, res) => {
+authRouter.get("/status", (req, res) => {
   if (req.isAuthenticated() && req.user) {
     res.json({ ok: true, data: req.user });
   } else {

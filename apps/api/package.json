@@ -11,7 +11,7 @@
     "check-types": "tsc --noEmit"
   },
   "exports": {
-    "*": "./src/index.ts"
+    ".": "./src/index.ts"
   },
   "keywords": [],
   "author": "",

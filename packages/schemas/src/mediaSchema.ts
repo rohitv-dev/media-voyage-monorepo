@@ -11,15 +11,15 @@ export const addMediaSchema = z.object({
   startDate: z.date().optional(),
   completedDate: z.date().optional(),
   comments: z.string().optional(),
-  rating: z.number(),
+  rating: z.number().optional(),
   type: MediaTypeEnum,
   recommended: z.boolean().optional(),
   status: MediaStatusEnum,
 });
 
-export const mediaUpdateSchema = addMediaSchema.extend({
+export const updateMediaSchema = addMediaSchema.extend({
   id: z.number(),
 });
 
 export interface AddMediaSchema extends z.infer<typeof addMediaSchema> {}
-export interface UpdateMediaSchema extends z.infer<typeof mediaUpdateSchema> {}
+export interface UpdateMediaSchema extends z.infer<typeof updateMediaSchema> {}

@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "bunchee",
-    "dev": "bunchee --watch"
+    "dev": "bunchee --watch --no-clean"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +42,16 @@
       "require": {
         "types": "./dist/cjs/mediaSchema.d.cts",
         "default": "./dist/cjs/mediaSchema.cjs"
+      }
+    },
+    "./authSchema": {
+      "import": {
+        "types": "./dist/es/authSchema.d.ts",
+        "default": "./dist/es/authSchema.js"
+      },
+      "require": {
+        "types": "./dist/cjs/authSchema.d.cts",
+        "default": "./dist/cjs/authSchema.cjs"
       }
     }
   }
