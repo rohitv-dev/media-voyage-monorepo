@@ -1,12 +1,12 @@
-import { NumberInput } from "@mantine/core";
+import { NumberInput, NumberInputProps } from "@mantine/core";
 import { useFieldContext } from "../form";
 
-export function NumberField({ label }: { label: string }) {
+export function NumberField(props: NumberInputProps) {
   const field = useFieldContext<number>();
 
   return (
     <NumberInput
-      label={label}
+      {...props}
       error={field.state.meta.errors[0]?.message}
       value={field.state.value}
       onChange={(v) => {

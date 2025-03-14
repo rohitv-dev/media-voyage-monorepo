@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as MediaRouteImport } from './routes/media/route'
 import { Route as AuthRouteImport } from './routes/auth/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as MediaIndexImport } from './routes/media/index'
+import { Route as MediaAddImport } from './routes/media/add'
 import { Route as AuthRegisterImport } from './routes/auth/register'
 import { Route as AuthLoginImport } from './routes/auth/login'
 
@@ -35,6 +37,18 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const MediaIndexRoute = MediaIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MediaRouteRoute,
+} as any)
+
+const MediaAddRoute = MediaAddImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => MediaRouteRoute,
 } as any)
 
 const AuthRegisterRoute = AuthRegisterImport.update({
@@ -88,6 +102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRegisterImport
       parentRoute: typeof AuthRouteImport
     }
+    '/media/add': {
+      id: '/media/add'
+      path: '/add'
+      fullPath: '/media/add'
+      preLoaderRoute: typeof MediaAddImport
+      parentRoute: typeof MediaRouteImport
+    }
+    '/media/': {
+      id: '/media/'
+      path: '/'
+      fullPath: '/media/'
+      preLoaderRoute: typeof MediaIndexImport
+      parentRoute: typeof MediaRouteImport
+    }
   }
 }
 
@@ -107,50 +135,84 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface MediaRouteRouteChildren {
+  MediaAddRoute: typeof MediaAddRoute
+  MediaIndexRoute: typeof MediaIndexRoute
+}
+
+const MediaRouteRouteChildren: MediaRouteRouteChildren = {
+  MediaAddRoute: MediaAddRoute,
+  MediaIndexRoute: MediaIndexRoute,
+}
+
+const MediaRouteRouteWithChildren = MediaRouteRoute._addFileChildren(
+  MediaRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
-  '/media': typeof MediaRouteRoute
+  '/media': typeof MediaRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/media/add': typeof MediaAddRoute
+  '/media/': typeof MediaIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
-  '/media': typeof MediaRouteRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/media/add': typeof MediaAddRoute
+  '/media': typeof MediaIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
-  '/media': typeof MediaRouteRoute
+  '/media': typeof MediaRouteRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/media/add': typeof MediaAddRoute
+  '/media/': typeof MediaIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/media' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/media'
+    | '/auth/login'
+    | '/auth/register'
+    | '/media/add'
+    | '/media/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/media' | '/auth/login' | '/auth/register'
-  id: '__root__' | '/' | '/auth' | '/media' | '/auth/login' | '/auth/register'
+  to: '/' | '/auth' | '/auth/login' | '/auth/register' | '/media/add' | '/media'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/media'
+    | '/auth/login'
+    | '/auth/register'
+    | '/media/add'
+    | '/media/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  MediaRouteRoute: typeof MediaRouteRoute
+  MediaRouteRoute: typeof MediaRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  MediaRouteRoute: MediaRouteRoute,
+  MediaRouteRoute: MediaRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -179,7 +241,11 @@ export const routeTree = rootRoute
       ]
     },
     "/media": {
-      "filePath": "media/route.tsx"
+      "filePath": "media/route.tsx",
+      "children": [
+        "/media/add",
+        "/media/"
+      ]
     },
     "/auth/login": {
       "filePath": "auth/login.tsx",
@@ -188,6 +254,14 @@ export const routeTree = rootRoute
     "/auth/register": {
       "filePath": "auth/register.tsx",
       "parent": "/auth"
+    },
+    "/media/add": {
+      "filePath": "media/add.tsx",
+      "parent": "/media"
+    },
+    "/media/": {
+      "filePath": "media/index.tsx",
+      "parent": "/media"
     }
   }
 }

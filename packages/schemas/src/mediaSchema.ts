@@ -6,18 +6,22 @@ export type MediaStatus = z.infer<typeof MediaStatusEnum>;
 export const MediaTypeEnum = z.enum(["Movie", "Show", "Game", "Book"]);
 export type MediaType = z.infer<typeof MediaTypeEnum>;
 
-export const addMediaSchema = z.object({
+const mediaSchema = z.object({
   title: z.string().min(1, "Title is required"),
   startDate: z.date().optional(),
   completedDate: z.date().optional(),
   comments: z.string().optional(),
   rating: z.number().optional(),
+  genre: z.string().optional(),
+  platform: z.string().optional(),
   type: MediaTypeEnum,
   recommended: z.boolean().optional(),
   status: MediaStatusEnum,
 });
 
-export const updateMediaSchema = addMediaSchema.extend({
+export const addMediaSchema = mediaSchema;
+
+export const updateMediaSchema = mediaSchema.extend({
   id: z.number(),
 });
 

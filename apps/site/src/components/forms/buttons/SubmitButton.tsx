@@ -1,14 +1,14 @@
-import { Button } from "@mantine/core";
+import { Button, ButtonProps } from "@mantine/core";
 import { useFormContext } from "../form";
 
-export function SubmitButton({ label }: { label: string }) {
+export function SubmitButton(props: ButtonProps) {
   const form = useFormContext();
 
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
         <Button type="submit" loading={isSubmitting}>
-          {label}
+          {props.children}
         </Button>
       )}
     </form.Subscribe>

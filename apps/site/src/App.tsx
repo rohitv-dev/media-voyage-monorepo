@@ -1,11 +1,10 @@
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./utils/trpc";
 import { useEffect } from "react";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, Modal, Rating } from "@mantine/core";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { useAtom } from "jotai";
 import { authAtom, initialUser, userAtom } from "./state/userAtom";
+import { authClient } from "./services/authClient";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -19,33 +18,54 @@ const router = createRouter({
 });
 
 function App() {
+  const { data, error, isPending } = authClient.useSession();
+
   const [user, setUser] = useAtom(userAtom);
   const [auth, setAuth] = useAtom(authAtom);
 
   useEffect(() => {
-    async function run() {
-      try {
-        setAuth((prev) => ({ ...prev, isLoading: true }));
-        const res = await fetch("/api/auth/status");
-        const json = await res.json();
-        if (json.ok) {
-          setUser(json.data);
-          setAuth((prev) => ({ ...prev, isLoggedIn: true }));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-      setAuth((prev) => ({ ...prev, isLoading: false }));
+    if (isPending) {
+      setAuth((prev) => ({ ...prev, isLoading: true }));
     }
-    run();
-  }, []);
+
+    if (error) {
+      setAuth((prev) => ({ ...prev, isLoading: false, isLoggedIn: false }));
+      setUser(initialUser);
+      return;
+    }
+
+    if (data) {
+      setAuth((prev) => ({ ...prev, isLoading: false, isLoggedIn: true }));
+      setUser(data.user);
+    }
+
+    setAuth((prev) => ({ ...prev, isLoading: false }));
+  }, [data, error, isPending, setAuth, setUser]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <MantineProvider>
-        <RouterProvider router={router} context={{ auth, user }} />
-      </MantineProvider>
-    </QueryClientProvider>
+    <MantineProvider
+      theme={{
+        primaryColor: "teal",
+        white: "#f4f3ef",
+        components: {
+          Rating: Rating.extend({
+            defaultProps: {
+              fractions: 2,
+            },
+          }),
+          Modal: Modal.extend({
+            styles: {
+              title: {
+                fontSize: 18,
+                fontWeight: "bold",
+              },
+            },
+          }),
+        },
+      }}
+    >
+      <RouterProvider router={router} context={{ auth, user }} />
+    </MantineProvider>
   );
 }
 

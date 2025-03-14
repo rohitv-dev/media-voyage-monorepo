@@ -1,33 +1,27 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { trpc } from "../../utils/trpc";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { ErrorScreen } from "../../components/ErrorScreen";
+import { authClient } from "../../services/authClient";
 
 export const Route = createFileRoute("/media")({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    if (context.auth.isLoading) return <>Loading...</>;
-    if (!context.auth.isLoggedIn)
+  beforeLoad: async () => {
+    const { data, error } = await authClient.getSession();
+
+    if (error) {
+      console.log(error.message);
+      return <ErrorScreen message={error.message} />;
+    }
+
+    if (!data?.user) {
       throw redirect({
         to: "/auth/login",
       });
+    }
 
-    return <RouteComponent />;
+    return <Outlet />;
   },
 });
 
 function RouteComponent() {
-  const { data, isLoading, isSuccess, isError, error } = useQuery(trpc.media.getMedia.queryOptions());
-
-  if (isLoading) return <>Data Loading...</>;
-  if (isError) return <>{error.message}</>;
-
-  if (!isSuccess) return <>Success Loading...</>;
-
-  return (
-    <>
-      {data.map((media) => (
-        <div key={media.id}>{media.title}</div>
-      ))}
-    </>
-  );
+  return <Outlet />;
 }

@@ -1,10 +1,21 @@
-import { ActionIcon, AppShell, Button, Container, Group, Stack, Title, useMantineColorScheme } from "@mantine/core";
+import {
+  ActionIcon,
+  AppShell,
+  Button,
+  Container,
+  Group,
+  Skeleton,
+  Stack,
+  Title,
+  useMantineColorScheme,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMoon, IconSun } from "@tabler/icons-react";
-import { createRootRouteWithContext, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { AuthState, User } from "../state/userAtom";
+import { authAtom, AuthState, User } from "../state/userAtom";
 import { HeaderDropdown } from "../components/HeaderDropdown";
+import { useAtom } from "jotai";
 
 interface MediaRouterContext {
   auth: AuthState;
@@ -16,10 +27,11 @@ export const Route = createRootRouteWithContext<MediaRouterContext>()({
 });
 
 function RootComponent() {
+  const [auth] = useAtom(authAtom);
+  // const { data, error, isPending } = authClient.useSession();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  const navigate = useNavigate();
-  const [opened, { toggle }] = useDisclosure();
+  const [opened] = useDisclosure();
 
   return (
     <>
@@ -35,38 +47,52 @@ function RootComponent() {
                 Media Voyage
               </Title>
             </Group>
-            <Group justify="end" visibleFrom="sm">
-              <Button component={Link} to="" variant="light">
-                Home
-              </Button>
-              <Button component={Link} to="add" variant="light">
-                Add
-              </Button>
-              <ActionIcon size="lg" onClick={toggleColorScheme}>
-                {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
-              </ActionIcon>
+            {auth.isLoading ? (
+              <Group>
+                <Skeleton w={100} h={35} />
+                <Skeleton w={100} h={35} />
+                <Skeleton w={100} h={35} />
+              </Group>
+            ) : (
+              <Group justify="end" visibleFrom="sm">
+                <Link to="/media">
+                  <Button variant="light">Home</Button>
+                </Link>
+                {!auth.isLoggedIn ? (
+                  <Link to="/auth/login">
+                    <Button variant="light">Login</Button>
+                  </Link>
+                ) : (
+                  <Link to="/media/add">
+                    <Button variant="light">Add</Button>
+                  </Link>
+                )}
+                <ActionIcon size="lg" onClick={toggleColorScheme}>
+                  {colorScheme === "dark" ? <IconSun /> : <IconMoon />}
+                </ActionIcon>
 
-              <HeaderDropdown />
-            </Group>
+                {auth.isLoggedIn && <HeaderDropdown />}
+              </Group>
+            )}
           </Group>
         </AppShell.Header>
         <AppShell.Navbar p="md">
           <Stack justify="space-between" h="100%">
             <Stack>
-              <Button variant="light" onClick={() => navigate({ to: "/" })}>
-                Home
-              </Button>
-              <Button component={Link} to="/add" variant="light">
-                Add
-              </Button>
-              <Button component={Link} to="/profile" variant="light">
-                Profile
-              </Button>
+              <Link to="/media">
+                <Button variant="light">Home</Button>
+              </Link>
+              <Link to="/media/add">
+                <Button variant="light">Add</Button>
+              </Link>
+              <Link to="/">
+                <Button variant="light">Profile</Button>
+              </Link>
               <Button variant="outline" onClick={toggleColorScheme}>
                 {colorScheme === "dark" ? "Light Mode" : "Dark Mode"}
               </Button>
             </Stack>
-            <Button component={Link} to="/logout" variant="light" color="red">
+            <Button variant="light" color="red">
               Logout
             </Button>
           </Stack>

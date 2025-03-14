@@ -36,7 +36,7 @@ export async function getSingleMedia(id: number) {
   }
 }
 
-export async function getMedia(id: number): Promise<Result<Media[]>> {
+export async function getMedia(id: string): Promise<Result<Media[]>> {
   try {
     const media = await db.select().from(mediaTable).where(eq(mediaTable.userId, id));
     return { ok: true, data: media };
@@ -45,7 +45,7 @@ export async function getMedia(id: number): Promise<Result<Media[]>> {
   }
 }
 
-export async function addMedia(id: number, media: AddMediaSchema) {
+export async function addMedia(id: string, media: AddMediaSchema) {
   try {
     const newMedia = await db
       .insert(mediaTable)

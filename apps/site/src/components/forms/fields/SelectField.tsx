@@ -1,15 +1,17 @@
-import { TextInput, TextInputProps } from "@mantine/core";
+import { Select, SelectProps } from "@mantine/core";
 import { useFieldContext } from "../form";
 
-export function TextField(props: TextInputProps) {
+export function SelectField(props: SelectProps) {
   const field = useFieldContext<string>();
 
   return (
-    <TextInput
+    <Select
       {...props}
       error={field.state.meta.errors[0]?.message}
       value={field.state.value}
-      onChange={(e) => field.handleChange(e.target.value)}
+      onChange={(val) => {
+        if (val) field.handleChange(val);
+      }}
       onBlur={field.handleBlur}
     />
   );

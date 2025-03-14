@@ -4,14 +4,15 @@ import { useAppForm } from "../../components/forms/form";
 import { loginSchema, LoginSchema } from "@repo/schemas/authSchema";
 import { useAtom } from "jotai";
 import { authAtom, userAtom } from "../../state/userAtom";
+import { authClient } from "../../services/authClient";
 
 export const Route = createFileRoute("/auth/login")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [auth, setAuth] = useAtom(authAtom);
-  const [user, setUser] = useAtom(userAtom);
+  const [, setAuth] = useAtom(authAtom);
+  const [, setUser] = useAtom(userAtom);
   const navigate = useNavigate();
 
   const { AppForm, AppField, SubmitButton, handleSubmit } = useAppForm({
@@ -22,26 +23,23 @@ function RouteComponent() {
     validators: {
       onSubmit: loginSchema,
     },
-    onSubmit: async (values) => {
-      try {
-        setAuth((prev) => ({ ...prev, isLoading: true }));
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values.value),
-        });
-        const json = await res.json();
+    onSubmit: async ({ value }) => {
+      setAuth((prev) => ({ ...prev, isLoading: true }));
+      const { data, error } = await authClient.signIn.email({
+        email: value.email,
+        password: value.password,
+      });
 
-        if (json.ok) {
-          setAuth((prev) => ({ ...prev, isLoggedIn: true }));
-          setUser(json.data);
-          navigate({ to: "/media" });
-        }
+      if (data) {
         setAuth((prev) => ({ ...prev, isLoading: false }));
-      } catch (error) {
-        console.error("Error during login:", error);
+        setUser(data.user);
+        navigate({ to: "/media" });
+      }
+
+      if (error) {
+        setAuth((prev) => ({ ...prev, isLoading: false }));
+        console.log(error.message);
+        return;
       }
     },
   });

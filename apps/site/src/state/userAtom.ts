@@ -1,11 +1,13 @@
 import { atom } from "jotai";
 
 export interface User {
-  id: number;
-  username: string;
+  id: string;
+  name: string;
   email: string;
-  createdOn: string;
-  updatedOn: string;
+  emailVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  image?: string | null;
 }
 
 export interface AuthState {
@@ -14,11 +16,12 @@ export interface AuthState {
 }
 
 export const initialUser: User = {
-  id: 0,
-  username: "",
+  id: "",
+  name: "",
   email: "",
-  createdOn: "",
-  updatedOn: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  emailVerified: false,
 };
 
 export const authAtom = atom<AuthState>({
@@ -26,10 +29,4 @@ export const authAtom = atom<AuthState>({
   isLoading: true,
 });
 
-export const userAtom = atom<User>({
-  id: 0,
-  username: "",
-  email: "",
-  createdOn: "",
-  updatedOn: "",
-});
+export const userAtom = atom<User>(initialUser);
