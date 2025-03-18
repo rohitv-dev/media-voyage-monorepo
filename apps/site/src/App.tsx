@@ -5,6 +5,7 @@ import { routeTree } from "./routeTree.gen";
 import { useAtom } from "jotai";
 import { authAtom, initialUser, userAtom } from "./state/userAtom";
 import { authClient } from "./services/authClient";
+import { Notifications } from "@mantine/notifications";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -64,6 +65,7 @@ function App() {
         },
       }}
     >
+      <Notifications position="top-center" />
       <RouterProvider router={router} context={{ auth, user }} />
     </MantineProvider>
   );

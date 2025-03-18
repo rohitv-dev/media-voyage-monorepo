@@ -1,5 +1,5 @@
-import { mediaTypeTable, statusTable } from "./schema";
 import { db } from "./db";
+import { statusTable, mediaTypeTable } from "./schemas/media";
 
 export async function seed() {
   try {

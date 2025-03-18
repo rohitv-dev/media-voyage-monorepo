@@ -3,12 +3,17 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAppForm } from "../../components/forms/form";
 import { registerSchema, RegisterSchema } from "@repo/schemas/authSchema";
 import { authClient } from "../../services/authClient";
+import { showErrorNotification } from "../../utils/notifications";
+import { useAtom } from "jotai";
+import { authAtom, userAtom } from "../../state/userAtom";
 
 export const Route = createFileRoute("/auth/register")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const [, setAuth] = useAtom(authAtom);
+  const [, setUser] = useAtom(userAtom);
   const navigate = useNavigate();
 
   const { AppForm, AppField, SubmitButton, handleSubmit } = useAppForm({
@@ -22,36 +27,27 @@ function RouteComponent() {
       onSubmit: registerSchema,
     },
     onSubmit: async ({ value }) => {
-      const { data, error } = await authClient.signUp.email(
-        {
-          name: value.username,
-          email: value.email,
-          password: value.password,
-        },
-        {
-          onSuccess: () => {
-            navigate({
-              to: "/media",
-            });
-          },
-          onError: (ctx) => {
-            console.log(ctx.error.message);
-          },
-        }
-      );
-      console.log(data, error);
-      // try {
-      //   const res = await fetch("/api/auth/register", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(values.value),
-      //   });
-      //   const json = await res.json();
-      // } catch (error) {
-      //   console.error("Error during register:", error);
-      // }
+      setAuth((prev) => ({ ...prev, isLoading: true }));
+
+      const { data, error } = await authClient.signUp.email({
+        name: value.username,
+        email: value.email,
+        password: value.password,
+      });
+
+      if (data) {
+        setAuth((prev) => ({ ...prev, isLoading: false }));
+        setUser(data.user);
+        navigate({
+          to: "/media",
+        });
+      }
+
+      if (error) {
+        setAuth((prev) => ({ ...prev, isLoading: false }));
+        showErrorNotification(error.message);
+        return;
+      }
     },
   });
 
@@ -86,7 +82,7 @@ function RouteComponent() {
                     <PasswordField label="Password" placeholder="Confirm Your Password" />
                   )}
                 />
-                <SubmitButton label="Register" />
+                <SubmitButton>Register</SubmitButton>
                 <Link to="/auth/login">Already have an account? Login!</Link>
               </Stack>
             </AppForm>

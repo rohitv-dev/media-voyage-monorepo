@@ -15,7 +15,7 @@ const mediaSchema = z.object({
   genre: z.string().optional(),
   platform: z.string().optional(),
   type: MediaTypeEnum,
-  recommended: z.boolean().optional(),
+  recommended: z.string().optional(),
   status: MediaStatusEnum,
 });
 
@@ -23,6 +23,7 @@ export const addMediaSchema = mediaSchema;
 
 export const updateMediaSchema = mediaSchema.extend({
   id: z.number(),
+  userId: z.string(),
 });
 
 export interface AddMediaSchema extends z.infer<typeof addMediaSchema> {}

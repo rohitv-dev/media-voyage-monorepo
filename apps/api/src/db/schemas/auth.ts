@@ -1,6 +1,6 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
-export const user = pgTable("users", {
+export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -23,7 +23,7 @@ export const session = pgTable("sessions", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("accounts", {
+export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -41,7 +41,7 @@ export const account = pgTable("accounts", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const verification = pgTable("verifications", {
+export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),

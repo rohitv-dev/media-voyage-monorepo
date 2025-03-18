@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { trpc } from "../../utils/trpc";
 import { ErrorScreen } from "../../components/ErrorScreen";
 import { LoadingScreen } from "../../components/LoadingScreen";
+import { MediaTable } from "../../components/table/MediaTable";
 
 export const Route = createFileRoute("/media/")({
   component: RouteComponent,
@@ -18,9 +19,7 @@ function RouteComponent() {
 
   return (
     <>
-      {data.map((media) => (
-        <div key={media.id}>{media.title}</div>
-      ))}
+      <MediaTable data={data} />
     </>
   );
 }

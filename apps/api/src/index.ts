@@ -39,6 +39,7 @@ app.use(
 
 app.get("/seed", async (req, res) => {
   await seed();
+  // await drizzleSeed(db, { mediaTable, statusTable, mediaTypeTable }).refine((f) => ({}));
   res.send("Done");
 });
 

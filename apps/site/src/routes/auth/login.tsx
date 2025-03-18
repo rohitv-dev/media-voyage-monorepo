@@ -5,6 +5,7 @@ import { loginSchema, LoginSchema } from "@repo/schemas/authSchema";
 import { useAtom } from "jotai";
 import { authAtom, userAtom } from "../../state/userAtom";
 import { authClient } from "../../services/authClient";
+import { showErrorNotification } from "../../utils/notifications";
 
 export const Route = createFileRoute("/auth/login")({
   component: RouteComponent,
@@ -39,6 +40,7 @@ function RouteComponent() {
       if (error) {
         setAuth((prev) => ({ ...prev, isLoading: false }));
         console.log(error.message);
+        showErrorNotification(error.message);
         return;
       }
     },
@@ -65,7 +67,7 @@ function RouteComponent() {
                   name="password"
                   children={({ PasswordField }) => <PasswordField label="Password" placeholder="Enter Your Password" />}
                 />
-                <SubmitButton label="Login" />
+                <SubmitButton>Login</SubmitButton>
                 <Link to="/auth/register">Don't have an account? Register!</Link>
               </Stack>
             </AppForm>

@@ -18,6 +18,8 @@ import { Route as MediaIndexImport } from './routes/media/index'
 import { Route as MediaAddImport } from './routes/media/add'
 import { Route as AuthRegisterImport } from './routes/auth/register'
 import { Route as AuthLoginImport } from './routes/auth/login'
+import { Route as MediaMediaIdViewImport } from './routes/media/$mediaId/view'
+import { Route as MediaMediaIdUpdateImport } from './routes/media/$mediaId/update'
 
 // Create/Update Routes
 
@@ -61,6 +63,18 @@ const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const MediaMediaIdViewRoute = MediaMediaIdViewImport.update({
+  id: '/$mediaId/view',
+  path: '/$mediaId/view',
+  getParentRoute: () => MediaRouteRoute,
+} as any)
+
+const MediaMediaIdUpdateRoute = MediaMediaIdUpdateImport.update({
+  id: '/$mediaId/update',
+  path: '/$mediaId/update',
+  getParentRoute: () => MediaRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -116,6 +130,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaIndexImport
       parentRoute: typeof MediaRouteImport
     }
+    '/media/$mediaId/update': {
+      id: '/media/$mediaId/update'
+      path: '/$mediaId/update'
+      fullPath: '/media/$mediaId/update'
+      preLoaderRoute: typeof MediaMediaIdUpdateImport
+      parentRoute: typeof MediaRouteImport
+    }
+    '/media/$mediaId/view': {
+      id: '/media/$mediaId/view'
+      path: '/$mediaId/view'
+      fullPath: '/media/$mediaId/view'
+      preLoaderRoute: typeof MediaMediaIdViewImport
+      parentRoute: typeof MediaRouteImport
+    }
   }
 }
 
@@ -138,11 +166,15 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface MediaRouteRouteChildren {
   MediaAddRoute: typeof MediaAddRoute
   MediaIndexRoute: typeof MediaIndexRoute
+  MediaMediaIdUpdateRoute: typeof MediaMediaIdUpdateRoute
+  MediaMediaIdViewRoute: typeof MediaMediaIdViewRoute
 }
 
 const MediaRouteRouteChildren: MediaRouteRouteChildren = {
   MediaAddRoute: MediaAddRoute,
   MediaIndexRoute: MediaIndexRoute,
+  MediaMediaIdUpdateRoute: MediaMediaIdUpdateRoute,
+  MediaMediaIdViewRoute: MediaMediaIdViewRoute,
 }
 
 const MediaRouteRouteWithChildren = MediaRouteRoute._addFileChildren(
@@ -157,6 +189,8 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/$mediaId/update': typeof MediaMediaIdUpdateRoute
+  '/media/$mediaId/view': typeof MediaMediaIdViewRoute
 }
 
 export interface FileRoutesByTo {
@@ -166,6 +200,8 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/media/add': typeof MediaAddRoute
   '/media': typeof MediaIndexRoute
+  '/media/$mediaId/update': typeof MediaMediaIdUpdateRoute
+  '/media/$mediaId/view': typeof MediaMediaIdViewRoute
 }
 
 export interface FileRoutesById {
@@ -177,6 +213,8 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/media/add': typeof MediaAddRoute
   '/media/': typeof MediaIndexRoute
+  '/media/$mediaId/update': typeof MediaMediaIdUpdateRoute
+  '/media/$mediaId/view': typeof MediaMediaIdViewRoute
 }
 
 export interface FileRouteTypes {
@@ -189,8 +227,18 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/media/add'
     | '/media/'
+    | '/media/$mediaId/update'
+    | '/media/$mediaId/view'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/auth/login' | '/auth/register' | '/media/add' | '/media'
+  to:
+    | '/'
+    | '/auth'
+    | '/auth/login'
+    | '/auth/register'
+    | '/media/add'
+    | '/media'
+    | '/media/$mediaId/update'
+    | '/media/$mediaId/view'
   id:
     | '__root__'
     | '/'
@@ -200,6 +248,8 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/media/add'
     | '/media/'
+    | '/media/$mediaId/update'
+    | '/media/$mediaId/view'
   fileRoutesById: FileRoutesById
 }
 
@@ -244,7 +294,9 @@ export const routeTree = rootRoute
       "filePath": "media/route.tsx",
       "children": [
         "/media/add",
-        "/media/"
+        "/media/",
+        "/media/$mediaId/update",
+        "/media/$mediaId/view"
       ]
     },
     "/auth/login": {
@@ -261,6 +313,14 @@ export const routeTree = rootRoute
     },
     "/media/": {
       "filePath": "media/index.tsx",
+      "parent": "/media"
+    },
+    "/media/$mediaId/update": {
+      "filePath": "media/$mediaId/update.tsx",
+      "parent": "/media"
+    },
+    "/media/$mediaId/view": {
+      "filePath": "media/$mediaId/view.tsx",
       "parent": "/media"
     }
   }

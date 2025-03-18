@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useAppForm } from "../../components/forms/form";
 import { trpc } from "../../utils/trpc";
 import { SimpleGrid, Stack, Title, Text, Center } from "@mantine/core";
 import { inferInput } from "@trpc/tanstack-react-query";
 import { addMediaSchema } from "@repo/schemas/mediaSchema";
 import { useMutation } from "@tanstack/react-query";
+import { showErrorNotification, showSuccessNotification } from "../../utils/notifications";
 
 type AddMediaSchema = inferInput<typeof trpc.media.addMedia>;
 
@@ -13,7 +14,21 @@ export const Route = createFileRoute("/media/add")({
 });
 
 function RouteComponent() {
-  const addMedia = useMutation(trpc.media.addMedia.mutationOptions());
+  const navigate = useNavigate();
+
+  const { mutateAsync, isPending, isError, error } = useMutation(
+    trpc.media.addMedia.mutationOptions({
+      onSuccess: () => {
+        showSuccessNotification("Media Added Successfully");
+        navigate({
+          to: "/media",
+        });
+      },
+      onError: (error) => {
+        showErrorNotification(error.message);
+      },
+    })
+  );
 
   const { AppForm, AppField, SubmitButton, handleSubmit } = useAppForm({
     defaultValues: {
@@ -22,10 +37,7 @@ function RouteComponent() {
       type: "Movie",
     } as AddMediaSchema,
     onSubmit: async ({ value }) => {
-      console.log(value);
-      const res = await addMedia.mutateAsync(value);
-
-      console.log(res);
+      await mutateAsync(value);
     },
     validators: {
       onSubmit: addMediaSchema,
@@ -41,6 +53,7 @@ function RouteComponent() {
     >
       <AppForm>
         <Stack>
+          {isError && <Text c="red">{error.message}</Text>}
           <Title order={3}>Add Media</Title>
           <AppField
             name="title"
@@ -98,7 +111,7 @@ function RouteComponent() {
           <Center>
             <AppField name="rating" children={({ RatingField }) => <RatingField size="xl" />} />
           </Center>
-          <SubmitButton loading={addMedia.isPending}>Add Media</SubmitButton>
+          <SubmitButton loading={isPending}>Add Media</SubmitButton>
         </Stack>
       </AppForm>
     </form>
