@@ -13,6 +13,7 @@ export function SelectField(props: SelectProps) {
         if (val) field.handleChange(val);
       }}
       onBlur={field.handleBlur}
+      onClear={props.clearable ? () => field.handleChange("") : undefined}
     />
   );
 }

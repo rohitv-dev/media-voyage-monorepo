@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   AppShell,
+  Burger,
   Button,
   Container,
   Group,
@@ -28,10 +29,9 @@ export const Route = createRootRouteWithContext<MediaRouterContext>()({
 
 function RootComponent() {
   const [auth] = useAtom(authAtom);
-  // const { data, error, isPending } = authClient.useSession();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  const [opened] = useDisclosure();
+  const [opened, { toggle }] = useDisclosure();
 
   return (
     <>
@@ -42,7 +42,7 @@ function RootComponent() {
         <AppShell.Header px="lg">
           <Group h="100%" justify="space-between">
             <Group>
-              {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" /> */}
+              <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
               <Title order={3} style={{ userSelect: "none", cursor: "pointer" }}>
                 Media Voyage
               </Title>
@@ -77,7 +77,7 @@ function RootComponent() {
           </Group>
         </AppShell.Header>
         <AppShell.Navbar p="md">
-          <Stack justify="space-between" h="100%">
+          <Stack justify="space-between" h="100%" w="100%">
             <Stack>
               <Link to="/media">
                 <Button variant="light">Home</Button>

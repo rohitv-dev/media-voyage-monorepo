@@ -13,9 +13,13 @@ function Index() {
   return (
     <Container>
       <Center>
-        <Stack style={{ textAlign: "center" }}>
-          <Title order={2}>Welcome!</Title>
-          {auth.isLoggedIn && <Link to="/media">Media</Link>}
+        <Stack style={{ textAlign: "center" }} mt="lg">
+          <Title order={1}>Welcome!</Title>
+          {auth.isLoggedIn && (
+            <Link to="/media" preload="intent">
+              Media
+            </Link>
+          )}
         </Stack>
       </Center>
     </Container>

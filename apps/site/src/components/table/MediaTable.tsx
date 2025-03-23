@@ -10,38 +10,38 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import {
+  ActionIcon,
   Box,
   Button,
   DefaultMantineColor,
-  Divider,
   Flex,
   Group,
   Menu,
   Paper,
   Pill,
   Rating,
+  Skeleton,
   Stack,
   StyleProp,
   Table,
   Text,
-  TextInput,
 } from "@mantine/core";
-import { IconChevronDown, IconSearch, IconX } from "@tabler/icons-react";
 import classes from "./MediaTable.module.scss";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { TableHeader } from "./TableHeader";
 import { formatDate } from "@repo/schemas/dateFunctions";
 import { Media, MediaArray } from "../../types/media";
 import { MediaStatus } from "@repo/schemas/mediaSchema";
 import { isNullish } from "remeda";
-import { Filter } from "./Filter";
+import { IconDotsVertical } from "@tabler/icons-react";
 
 interface MediaTableProps {
-  data: MediaArray;
+  data: NonNullable<MediaArray>;
   viewOnly?: boolean;
+  isLoading: boolean;
 }
 
-export const MediaTable = ({ data, viewOnly }: MediaTableProps) => {
+export const MediaTable = ({ data, isLoading, viewOnly }: MediaTableProps) => {
   const navigate = useNavigate();
   const columnHelper = createColumnHelper<Media>();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -85,7 +85,7 @@ export const MediaTable = ({ data, viewOnly }: MediaTableProps) => {
           );
         },
       }),
-      columnHelper.accessor("createdOn", {
+      columnHelper.accessor("createdAt", {
         id: "Added On",
         header: (ctx) => <TableHeader ctx={ctx} />,
         cell: (info) => {
@@ -110,71 +110,73 @@ export const MediaTable = ({ data, viewOnly }: MediaTableProps) => {
         enableGlobalFilter: false,
         enableColumnFilter: false,
       }),
-      // columnHelper.display({
-      //   id: "Actions",
-      //   header: () => null,
-      //   cell: (info) => {
-      //     const { id } = info.row.original;
+      columnHelper.display({
+        id: "Actions",
+        header: () => null,
+        cell: (info) => {
+          const { id } = info.row.original;
 
-      //     return (
-      //       <Box>
-      //         <Menu>
-      //           <Menu.Target>
-      //             <ActionIcon
-      //               variant="transparent"
-      //               visibleFrom="sm"
-      //               onClick={(e) => {
-      //                 e.stopPropagation();
-      //               }}
-      //             >
-      //               <IconDotsVertical stroke={1} />
-      //             </ActionIcon>
-      //           </Menu.Target>
-      //           <Menu.Dropdown>
-      //             <Menu.Item
-      //               onClick={(e) => {
-      //                 e.stopPropagation();
-      //                 navigate({
-      //                   to: `view/${id}`,
-      //                 });
-      //               }}
-      //             >
-      //               View
-      //             </Menu.Item>
-      //             {!viewOnly && (
-      //               <Menu.Item
-      //                 onClick={(e) => {
-      //                   e.stopPropagation();
-      //                   navigate({
-      //                     to: `update/${id}`,
-      //                   });
-      //                 }}
-      //               >
-      //                 Update
-      //               </Menu.Item>
-      //             )}
-      //           </Menu.Dropdown>
-      //         </Menu>
-      //         <Group grow hiddenFrom="sm">
-      //           <Link to="/">
-      //             <Button size="xs" variant="light">
-      //               View
-      //             </Button>
-      //           </Link>
-      //           <Link to="/">
-      //             <Button size="xs" variant="light">
-      //               Update
-      //             </Button>
-      //           </Link>
-      //         </Group>
-      //       </Box>
-      //     );
-      //   },
-      //   enableSorting: false,
-      //   enableColumnFilter: false,
-      // }),
+          return (
+            <Box>
+              <Menu>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="transparent"
+                    visibleFrom="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <IconDotsVertical stroke={1} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate({
+                        to: "/media/$mediaId/view",
+                        params: { mediaId: id.toString() },
+                      });
+                    }}
+                  >
+                    View
+                  </Menu.Item>
+                  {!viewOnly && (
+                    <Menu.Item
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate({
+                          to: "/media/$mediaId/update",
+                          params: { mediaId: id.toString() },
+                        });
+                      }}
+                    >
+                      Update
+                    </Menu.Item>
+                  )}
+                </Menu.Dropdown>
+              </Menu>
+              <Group grow hiddenFrom="sm">
+                <Link to="/">
+                  <Button size="xs" variant="light">
+                    View
+                  </Button>
+                </Link>
+                <Link to="/">
+                  <Button size="xs" variant="light">
+                    Update
+                  </Button>
+                </Link>
+              </Group>
+            </Box>
+          );
+        },
+        enableSorting: false,
+        enableColumnFilter: false,
+      }),
     ],
-    [columnHelper]
+    [columnHelper, navigate, viewOnly]
   );
 
   const table = useReactTable({
@@ -218,52 +220,6 @@ export const MediaTable = ({ data, viewOnly }: MediaTableProps) => {
           }
         })}
       </Flex>
-      <Group justify="space-between">
-        <TextInput
-          flex={1}
-          leftSection={<IconSearch size={18} />}
-          placeholder="Search"
-          size="xs"
-          value={globalFilter}
-          onChange={(e) => {
-            setGlobalFilter(String(e.target.value));
-          }}
-        />
-        <Group gap="xs">
-          {table
-            .getAllColumns()
-            .filter((col) => col.getCanFilter())
-            .map((col) => (
-              <Menu key={col.id}>
-                <Menu.Target>
-                  <Button size="xs" variant="outline" rightSection={<IconChevronDown size={16} />}>
-                    {col.id}
-                  </Button>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Stack>
-                    <Filter column={col} table={table} />
-                    <Divider />
-                    <Group justify="end">
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        leftSection={<IconX size={16} />}
-                        onClick={() => col.setFilterValue("")}
-                      >
-                        Clear
-                      </Button>
-                    </Group>
-                  </Stack>
-                </Menu.Dropdown>
-              </Menu>
-            ))}
-          {/* <Button variant="outline" size="xs" color="yellow" onClick={() => downloadCsv(data)}>
-            Export
-          </Button> */}
-        </Group>
-      </Group>
-
       {/* <Stack hiddenFrom="sm">
         {table.getRowModel().rows.map((row) => (
           <MediaCard key={row.id} media={row.original} />
@@ -272,7 +228,15 @@ export const MediaTable = ({ data, viewOnly }: MediaTableProps) => {
 
       <Stack visibleFrom="sm">
         <Paper shadow="xs">
-          <Table withColumnBorders withRowBorders>
+          <Box mt="md" hidden={!isLoading}>
+            <Skeleton height={30} width="40%" radius="sm" />
+            {[...Array(8)].map((_i, idx) => {
+              return <Skeleton height={20} mt={25} radius="sm" key={idx} />;
+            })}
+            <Skeleton height={30} mt="auto" width="70%" style={{ alignSelf: "flex-end" }} radius="sm" />
+          </Box>
+
+          <Table withColumnBorders withRowBorders hidden={isLoading}>
             <Table.Thead className={classes.header}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Table.Tr key={headerGroup.id}>

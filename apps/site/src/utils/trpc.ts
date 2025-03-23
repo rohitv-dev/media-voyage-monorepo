@@ -4,7 +4,16 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      // 15 minutes
+      gcTime: 1000 * 60 * 10,
+      staleTime: Infinity,
+    },
+  },
+});
 
 const trpcClient = createTRPCClient<AppRouter>({
   links: [

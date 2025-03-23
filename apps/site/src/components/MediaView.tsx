@@ -14,12 +14,9 @@ import {
 import { useEditor } from "@tiptap/react";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { useQueryClient } from "@tanstack/react-query";
 import { Media } from "../types/media";
 import { DataColumn } from "./DataColumn";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 interface MediaViewProps {
   media: Media;
@@ -29,49 +26,17 @@ interface MediaViewProps {
 export const MediaView = ({ media, viewOnly }: MediaViewProps) => {
   const { colorScheme } = useMantineColorScheme();
 
-  // const { mutateAsync, isPending, isError, error } = useMutation({
-  //   mutationFn: MediaService.deleteMedia,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["media"] });
-  //   },
-  //   onError: (res) => {
-  //     showErrorNotification(res.message);
-  //   },
-  // });
-
   const editor = useEditor({
     extensions: [StarterKit],
     content: media?.comments ?? "",
     editable: false,
   });
 
-  // useEffect(() => {
-  //   const controls = animate(0, media?.rating, {
-  //     onUpdate: (val) => {
-  //       if (val) setRating(val);
-  //     },
-  //   });
-
-  //   return () => controls.stop();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // const handleDelete = async () => {
-  //   if (!media.id) return;
-  //   const res = await mutateAsync(media.id);
-  //   if (res.ok) {
-  //     showSuccessNotification("Deleted Media Successfully");
-  //     navigate("/");
-  //   } else showErrorNotification(res.message);
-  //   deleteHandlers.close();
-  // };
-
   if (!media) return null;
 
   return (
     <Card shadow={colorScheme === "dark" ? "sm" : "lg"}>
       <Stack gap="sm">
-        {/* {isError ? <Text>{error.message}</Text> : null} */}
         <Group justify="space-between">
           <Group align="center">
             <Title c="teal">{media.title}</Title>
@@ -110,28 +75,10 @@ export const MediaView = ({ media, viewOnly }: MediaViewProps) => {
         ) : null}
         <Divider />
         <SimpleGrid cols={2}>
-          <DataColumn title="Added On" value={media.createdOn} />
-          <DataColumn title="Last Updated On" value={media.createdOn} />
+          <DataColumn title="Added On" value={media.createdAt} />
+          <DataColumn title="Last Updated On" value={media.updatedAt} />
         </SimpleGrid>
       </Stack>
-      {/* <Modal opened={deleteOpened} onClose={deleteHandlers.close} title={`Delete ${media.title}?`}>
-        <Stack>
-          <Stack gap="xs">
-            <Text>Are you sure you want to delete...</Text>
-            <Text fw="bold" fz="lg">
-              {toUpperCase(media.title)}?!
-            </Text>
-          </Stack>
-          <Group justify="right">
-            <Button loading={isPending} onClick={deleteHandlers.close}>
-              No
-            </Button>
-            <Button color="red" onClick={handleDelete} loading={isPending}>
-              Yes
-            </Button>
-          </Group>
-        </Stack>
-      </Modal> */}
     </Card>
   );
 };

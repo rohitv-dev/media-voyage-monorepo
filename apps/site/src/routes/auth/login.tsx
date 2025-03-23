@@ -1,14 +1,25 @@
 import { Card, Center, Container, Stack, Title } from "@mantine/core";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useAppForm } from "../../components/forms/form";
 import { loginSchema, LoginSchema } from "@repo/schemas/authSchema";
 import { useAtom } from "jotai";
 import { authAtom, userAtom } from "../../state/userAtom";
 import { authClient } from "../../services/authClient";
 import { showErrorNotification } from "../../utils/notifications";
+import { LoadingScreen } from "../../components/LoadingScreen";
 
 export const Route = createFileRoute("/auth/login")({
   component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    if (context.auth.isLoading) return <LoadingScreen />;
+
+    if (context.auth.isLoggedIn)
+      throw redirect({
+        to: "/media",
+      });
+
+    return <Outlet />;
+  },
 });
 
 function RouteComponent() {

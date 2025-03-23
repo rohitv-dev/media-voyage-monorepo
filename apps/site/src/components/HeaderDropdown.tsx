@@ -21,7 +21,14 @@ export const HeaderDropdown = () => {
         <Menu.Item disabled leftSection={<IconSettings size={18} />}>
           Settings
         </Menu.Item>
-        <Menu.Item disabled leftSection={<IconUser size={18} />}>
+        <Menu.Item
+          leftSection={<IconUser size={18} />}
+          onClick={() =>
+            navigate({
+              to: "/profile",
+            })
+          }
+        >
           Profile
         </Menu.Item>
         <Divider size={1} mx="xs" />

@@ -10,7 +10,7 @@ export const mediaRouter = router({
     const res = await MediaController.getSingleMedia(ctx.user.id, input.id);
     if (res.ok) return res.data;
     throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
+      code: "NOT_FOUND",
       message: res.message,
     });
   }),
@@ -23,6 +23,17 @@ export const mediaRouter = router({
       message: res.message,
     });
   }),
+
+  getMediaBy: protectedProcedure
+    .input(z.object({ title: z.string().optional(), status: z.string().optional(), type: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const res = await MediaController.getMediaBy(ctx.user.id, input);
+      if (res.ok) return res.data;
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: res.message,
+      });
+    }),
 
   addMedia: protectedProcedure.input(addMediaSchema).mutation(async ({ ctx, input }) => {
     console.log(input);

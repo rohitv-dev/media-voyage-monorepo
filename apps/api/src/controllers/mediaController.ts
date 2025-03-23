@@ -3,7 +3,7 @@ import { Media, mediaTable } from "../db/schemas/media";
 import { AddMediaSchema, UpdateMediaSchema } from "@repo/schemas/mediaSchema";
 import { Result } from "../types/api";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 import { db } from "../db/db";
 
 export const MediaController = {
@@ -29,7 +29,27 @@ export const MediaController = {
     }
   },
 
-  async addMedia(id: string, media: AddMediaSchema) {
+  async getMediaBy(userId: string, input: { title?: string; status?: string; type?: string }) {
+    try {
+      console.log(input);
+
+      const queries = [];
+
+      if (input.title && input.title !== "") queries.push(ilike(mediaTable.title, `%${input.title}%`));
+      if (input.status && input.status !== "") queries.push(eq(mediaTable.status, input.status));
+      if (input.type && input.type !== "") queries.push(eq(mediaTable.type, input.type));
+
+      const media = await db
+        .select()
+        .from(mediaTable)
+        .where(and(eq(mediaTable.userId, userId), ...queries));
+      return { ok: true, data: media };
+    } catch (err) {
+      return { ok: false, message: `${err}` };
+    }
+  },
+
+  async addMedia(userId: string, media: AddMediaSchema) {
     try {
       const newMedia = await db
         .insert(mediaTable)
@@ -44,6 +64,7 @@ export const MediaController = {
           completedDate: media.completedDate,
           recommended: media.recommended ? (media.recommended === "Yes" ? true : false) : null,
           comments: media.comments ?? null,
+          userId,
         })
         .returning();
 

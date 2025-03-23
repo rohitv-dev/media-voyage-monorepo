@@ -7,6 +7,7 @@ import { SelectField } from "./fields/SelectField";
 import { DateField } from "./fields/DateField";
 import { EditorField } from "./fields/EditorField";
 import { RatingField } from "./fields/RatingField";
+import { MultiSelectField } from "./fields/MultiSelectField";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
 
@@ -21,6 +22,7 @@ export const { useAppForm } = createFormHook({
     DateField,
     EditorField,
     RatingField,
+    MultiSelectField,
   },
   formComponents: {
     SubmitButton,
